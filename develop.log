@@ -1,0 +1,49 @@
+设置代理处理跨域
+不进行设置会报404的错误。
+因为直接访问8888端口访问不到，这里需要设置代理服务器。
+这里前后端出现的原因是什么
+
+在Web开发中，跨域问题（CORS, Cross-Origin Resource Sharing）通常发生在前端应用尝试从与自身不同的源（域名、协议或端口号）请求资源时。浏览器出于安全原因实施了同源策略，限制了从一个源加载的文档或脚本如何与另一个源的资源进行交互。当你的前端应用试图通过AJAX请求访问后端API，而这两个服务运行在不同的端口或域名上时，就会遇到跨域问题。
+
+跨域问题的原因
+不同端口：即使是在同一个域名下，如果前端和后端服务运行在不同的端口，也会被视为不同的源。
+不同域名：前端和后端部署在完全不同的域名上。
+不同协议：例如，前端使用HTTP而后端使用HTTPS，或者反之。
+解决方案：设置代理服务器
+为了克服这个问题，一种常见的方法是使用代理服务器。代理服务器可以在同一源上接收前端请求，然后将这些请求转发到实际的后端API地址。这样，前端看起来就像是在向同一源发送请求，从而避免了跨域问题。
+
+使用Express设置代理服务器
+如果你正在使用Express作为后端框架，可以通过安装http-proxy-middleware来轻松地设置代理。以下是具体步骤：
+
+安装http-proxy-middleware
+bash
+深色版本
+npm install http-proxy-middleware --save
+创建代理配置文件 在你的项目根目录下创建一个名为setupProxy.js的文件（对于React项目，这个文件应该放在src目录下）。然后，在该文件中添加以下代码：
+javascript
+深色版本
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+module.exports = function(app) {
+  app.use(
+    '/api', // 这是你希望代理的路径前缀
+    createProxyMiddleware({
+      target: 'http://localhost:8888', // 后端API的实际地址
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': '' // 移除路径前缀
+      }
+    })
+  );
+};
+这段代码的作用是将所有以/api开头的请求代理到http://localhost:8888。changeOrigin选项允许更改请求的主机头为目标主机头，这对于某些后端来说是必需的。pathRewrite用于移除代理路径前缀，确保后端能够正确解析路径。
+启动Express应用 如果你还没有这样做，记得启动你的Express应用。确保它监听在8888端口上，如你之前提到的那样。
+修改前端请求 在你的前端代码中，将所有的API请求路径更改为以/api开始，而不是直接指向http://localhost:8888。例如，如果你之前有一个请求像这样：
+javascript
+深色版本
+fetch('http://localhost:8888/some-endpoint')
+修改为：
+javascript
+深色版本
+fetch('/api/some-endpoint')
+通过以上步骤，你可以有效地解决跨域问题，并且前端应用可以顺利地与后端API进行通信。这种方法特别适用于开发环境，在生产环境中，你可能需要通过反向代理服务器（如Nginx）来实现类似的功能。

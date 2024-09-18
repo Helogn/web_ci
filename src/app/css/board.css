@@ -1,0 +1,13 @@
+.input-bordered {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 4px;
+    background: #ffffff;
+  }
+
+.login-bordered {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 4px;
+  background: #b2cde691;
+}

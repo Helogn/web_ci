@@ -19,10 +19,13 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.imageContainer}>
           <Image
-            src="http://192.168.33.14/bin/background.png" // 替换为你的图片路径
-            alt="Background Image"
-            layout="fill"
-            objectFit="cover"
+          // 在 Next.js 中，public 文件夹是用于存放静态资源的默认位置。
+          // 这些资源可以直接通过 URL 访问，而无需进一步的处理。
+          // 如果你没有 public 文件夹，确实可以自行创建并在其中放置需要的静态文件。
+            src="/background.png" // 替换为你的图片路径
+            width={500}
+            height={500}
+            alt="Background"
           />
         </div>
         <div className={styles.loginContainer}>
